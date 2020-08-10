@@ -122,6 +122,8 @@ Packet processTCPProtocol(Packet packet) {
 
     std::cout << "Source port: " << tcpHdr->th_sport << std::endl;
     std::cout << "Destination port: " << tcpHdr->th_dport << std::endl;
+    std::cout << "Sequence number: " << (unsigned)tcpHdr->seq << std::endl;
+    std::cout << "Ack Sequence number: " << (unsigned)tcpHdr->ack_seq << std::endl;
 
     std::cout << "TCP flags: ";
     if ((tcpHdr->th_flags & TH_FIN) == TH_FIN) {
@@ -148,13 +150,13 @@ Packet processTCPProtocol(Packet packet) {
         std::cout << "urgent ";
     }
 
-    if ((tcpHdr->th_flags & TH_ECE) == TH_ECE) {
-        std::cout << "ECE ";
-    }
-
-    if ((tcpHdr->th_flags & TH_CWR) == TH_CWR) {
-        std::cout << "congestion window reduced ";
-    }
+//    if ((tcpHdr->th_flags & TH_ECE) == TH_ECE) {
+//        std::cout << "ECE ";
+//    }
+//
+//    if ((tcpHdr->th_flags & TH_CWR) == TH_CWR) {
+//        std::cout << "congestion window reduced ";
+//    }
     std::cout << std::endl;
 
     uint8_t tcpHdrLength = tcpHdr->th_off * 4;
@@ -233,12 +235,14 @@ int main()
 
     std::cout << "==============================" << std::endl;
 
-    int rc = pcap_loop(interfaceHandler, 10, processPacket, NULL);
+    int rc = pcap_loop(interfaceHandler, 30, processPacket, NULL);
     if (rc != 0) {
         std::cout << "Error happened while capturing packets" << std::endl;
     }
 
     pcap_close(interfaceHandler);
+
+    std::cout << "Terminating program..." << std::endl;
 
     return 0;
 }
